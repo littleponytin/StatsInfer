@@ -1,0 +1,66 @@
+---
+  title: "Statistical Inference Course Project"
+  author: "LPT"
+  date: "Tuesday, Jan 20, 2014"
+---
+  
+## Synopsis:
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+```{r knitr_options, include=FALSE, echo=TRUE}
+library(knitr)
+opts_chunk$set(fig.width=12, fig.height=4, fig.path='RmdFigs/',
+               warning=FALSE, message=FALSE)
+```
+
+##Simulations
+```{r Simulations, cache=TRUE}
+set.seed(800)
+lambda <- 0.2
+
+# to investigate 40 samples based on 1000 simulations
+nSam <- 40
+nSim <- 1:1000
+
+# average of 40 samples
+Means <- data.frame(x = sapply(nSim, function(x) {
+    mean(rexp(nSam, lambda))
+}))
+
+```
+
+##Question 1
+Mean of 40 samples is:
+  
+```{r Results1}
+mean(Means$x) 
+```
+
+Theoretical mean (1/lambda) is:
+```{r TResults1}
+1/lambda   
+```
+1. The above results shows that the center of distribution of averages of 40 samples is close to the theoretical center of the distribution.
+
+
+##Question 2
+Variance of 40 samples is:
+```{r Results2}
+var(Means$x)    
+```
+
+Theoretical variance is:
+```{r TResults2}
+((1/lambda)/sqrt(nSam))^2   
+```
+2. The above results shows that the computed variance is close to the theoretical variance of the distribution.
+
+##Question 3
+```{r Results3}
+library(ggplot2)
+ggplot(data = Means, aes(x = x)) + geom_histogram(aes(y = ..density..), fill = I("pink"), 
+    binwidth = 0.2, color = I("blue")) + stat_function(fun = dnorm, arg = list(mean = 5, 
+    sd = sd(Means$x)))
+
+```
+3. The plot shows that the distribution is approximately normal.
